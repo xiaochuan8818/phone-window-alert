@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<title>Document</title>
+	<style>
+		body{
+			background: white;
+		}
+	</style>
+</head>
+<body>
+	<div id="wrap"></div>
+</body>
+<script type="text/javascript">
+	(function() {
+		function _createElements() {
+			var Attr = arguments[1] || '';
+			var creatEle =  document.createElement(arguments[0]);
+				creatEle.setAttribute('id',Attr);
+			return creatEle;
+		};
+		function _setcssStyle() {
+            var revcss = arguments[1]; //获取样式初始参数
+			var cssModal = {
+				layer : 'position:fixed;width:100%;height:100%;z-index:9998;'+
+						'left:0;top:0;background:rgba(0,0,0,0.3);',
+				outerContent : 'width:'+revcss.OCW+';height:'+revcss.OCH()+'px;display:-webkit-box;'+
+						'-webkit-box-orient:vertical;margin:auto;'+
+						'position:fixed;top:0;bottom:0;left:0;'+
+						'right:0;overflow:hidden;z-index:9999;'+
+                        'border-radius:6px;opacity:1;',
+						//定义弹框的样式；
+				mainPrompt : 'width:100%;height:'+revcss.PH+'px;background:white;'+
+						  'border-bottom:1px solid #f5f1f1;text-align:center;'+
+						  'font-size:'+revcss.pFont+'px;line-height:60px;',
+						//定义提示文字样式；
+				mainButton : 'width:100%;height:'+revcss.BH+'px;display:-webkit-box;',
+						//定义按钮框得样式;
+				confirmBtn : '-webkit-box-flex:1;box-flex:1;'+
+						  'height:100%;text-align:center;'+
+						  'line-height:'+revcss.BH+'px;'+
+                          'font-size:13px;background:white;',
+				cancelBtn : 'border-left:1px solid #f5f1f1;'+
+                           '-webkit-box-flex:1;box-flex:1;'+
+						  'height:100%;text-align:center;'+
+						  'line-height:'+revcss.BH+'px;'+
+                          'background:white;font-size:'+revcss.bFont+'px;'
+						  
+			}
+            //给元素添加样式
+            for(var key in cssModal) 
+            {
+                arguments[0][key].style = cssModal[key];
+            };
+		}
+        function _clickEvent(ele1,ele2) {
+            ele1.onclick = function() {
+                alert('点击确认')
+            };
+            ele2.onclick = function() {
+                alert('点击取消')
+            }
+        }
+ 		function _domInitial () {
+            if(typeof arguments[0] == 'function') {
+                arguments[1] = arguments[0];
+                arguments[0] = null;
+            }
+            var _init = arguments[3] || {
+                bFont : '12',
+                pFont : '14',
+                OCW : '50%',
+                PH : '60',
+                BH : arguments[0]=='bh'?'0' : '40',
+                OCH : function() {
+                    return parseInt(this.PH)+parseInt(this.BH);
+                }
+            };
+            var _init_text = arguments[2] || {
+                cmt : '确认',
+                cct : '取消',
+                ptt : '这是提示信息！'
+            };
+            var layerbox =  _createElements('div','layerbox');
+			var layer =  _createElements('div','layer');
+			//创建外层div
+			var outerContent = _createElements('div','window-alert');
+			var mainPrompt = _createElements('div','prompt');
+			mainPrompt.innerText = _init_text.ptt;
+            //嵌套元素
+            outerContent.appendChild(mainPrompt);
+            if(arguments[0]!='bh'){
+               var confirmBtn = _createElements('div','confirm');
+                confirmBtn.innerText = _init_text.cmt;
+                var mainButton =_createElements('div','mainButton');
+                 outerContent.appendChild(mainButton);
+                mainButton.appendChild(confirmBtn);
+            }
+            if(arguments[0]!='cm'&&arguments[0] != 'bh') {
+               var cancelBtn =  _createElements('div','cancel');
+                cancelBtn.innerText = _init_text.cct;
+                mainButton.appendChild(cancelBtn);
+            }
+			//插入到body中
+			layerbox.appendChild(layer);
+			layerbox.appendChild(outerContent);
+            if(!document.getElementById('layerbox')){
+                document.body.appendChild(layerbox);
+            };
+            //默认隐藏弹出框
+            layerbox.style = 'display:none'; 
+			//调用样式文件
+			_setcssStyle({
+				layer : layer,
+				outerContent : outerContent,
+				mainPrompt : mainPrompt,
+				mainButton : mainButton||'',
+				confirmBtn : confirmBtn||'',
+				cancelBtn : cancelBtn||''
+            },_init);
+            _clickEvent(confirmBtn,cancelBtn,arguments[1]);
+		}
+		function _createDocument (crestatus) {
+            if(typeof crestatus == 'function') {
+                var CB = crestatus;
+                crestatus = null;
+            }
+			switch (crestatus) {
+				case 'confirm' : //只有确认按钮
+                    /*
+                        此函数内接受三个参数
+                        第一个是显示按钮的参数
+                        第三个个为设置弹出框的样式 *传{参数}
+                        第二个为设置弹出框的字体 *传{参数}
+                    */
+                    _domInitial('cm'); 
+				break;
+				case 'both' : //没有按钮
+                     _domInitial('bh'); 
+				break;
+				default :  //两个按钮都有
+                     _domInitial(); 
+				break;
+			}
+		}
+        document.onclick = function() {
+          _createDocument(function() {
+
+          });
+        document.getElementById('layerbox').style.display = 'block';
+    }
+	})()
+</script>
+</html>
