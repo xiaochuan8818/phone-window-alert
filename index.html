@@ -8,10 +8,27 @@
 		body{
 			background: white;
 		}
+        #wrap{
+            width: 100px;
+            height: 50px;
+            background: blue;
+            margin: 0 auto;
+        }
+        #one{
+            width: 100px;
+            height: 100px;
+            transform: scale(0.3);
+            transition: all 1s linear;
+            background: green;
+        }
+        #one:hover{
+            transform: scale(1);
+        }
 	</style>
 </head>
 <body>
 	<div id="wrap"></div>
+    <div id="one"></div>
 </body>
 <script type="text/javascript">
 	(function() {
@@ -30,7 +47,8 @@
 						'-webkit-box-orient:vertical;margin:auto;'+
 						'position:fixed;top:0;bottom:0;left:0;'+
 						'right:0;overflow:hidden;z-index:9999;'+
-                        'border-radius:6px;opacity:1;',
+                        'border-radius:6px;opacity:1;'+
+                        'transform:scale(1);transition:all .2s linear;',
 						//定义弹框的样式；
 				mainPrompt : 'width:100%;height:'+revcss.PH+'px;background:white;'+
 						  'border-bottom:1px solid #f5f1f1;text-align:center;'+
@@ -55,12 +73,22 @@
                 arguments[0][key].style = cssModal[key];
             };
 		}
-        function _clickEvent(ele1,ele2) {
+        function _clickEvent(ele1,ele2,callback) {
+            var layer = document.querySelector('#layerbox');
+            var alert = document.querySelector('#window-alert');
             ele1.onclick = function() {
-                alert('点击确认')
+                alert.style.transform = 'scale(0)';
+                setTimeout(function(){
+                    document.body.removeChild(layer);
+                }, 200);
+                callback('true');
             };
             ele2.onclick = function() {
-                alert('点击取消')
+                alert.style.transform = 'scale(0)';
+                setTimeout(function(){
+                    document.body.removeChild(layer);
+                }, 200);
+                callback('false');
             }
         }
  		function _domInitial () {
@@ -110,7 +138,7 @@
                 document.body.appendChild(layerbox);
             };
             //默认隐藏弹出框
-            layerbox.style = 'display:none'; 
+            layerbox.style = 'display:block'; 
 			//调用样式文件
 			_setcssStyle({
 				layer : layer,
@@ -123,6 +151,7 @@
             _clickEvent(confirmBtn,cancelBtn,arguments[1]);
 		}
 		function _createDocument (crestatus) {
+            console.log(this);
             if(typeof crestatus == 'function') {
                 var CB = crestatus;
                 crestatus = null;
@@ -141,16 +170,17 @@
                      _domInitial('bh'); 
 				break;
 				default :  //两个按钮都有
-                     _domInitial(); 
+
+                    !CB ? _domInitial() : _domInitial(CB); 
 				break;
 			}
 		}
-        document.onclick = function() {
-          _createDocument(function() {
-
+        document.getElementById('wrap').onclick = function() {
+            console.log(this);
+          _createDocument(function(rev) {
+            console.log(rev);
           });
-        document.getElementById('layerbox').style.display = 'block';
-    }
+        }
 	})()
 </script>
 </html>
