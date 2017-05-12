@@ -14,6 +14,9 @@
             background: blue;
             margin: 0 auto;
         }
+        #window-alert{
+            transform: scale(0);
+        }
         #one{
             width: 100px;
             height: 100px;
@@ -42,13 +45,13 @@
             var revcss = arguments[1]; //获取样式初始参数
 			var cssModal = {
 				layer : 'position:fixed;width:100%;height:100%;z-index:9998;'+
-						'left:0;top:0;background:rgba(0,0,0,0.3);',
+						'left:0;top:0;background:rgba(0,0,0,0.3);display:none;',
 				outerContent : 'width:'+revcss.OCW+';height:'+revcss.OCH()+'px;display:-webkit-box;'+
 						'-webkit-box-orient:vertical;margin:auto;'+
 						'position:fixed;top:0;bottom:0;left:0;'+
 						'right:0;overflow:hidden;z-index:9999;'+
                         'border-radius:6px;opacity:1;'+
-                        'transform:scale(1);transition:all .2s linear;',
+                        'transform:scale(1);transition:all .3s linear;',
 						//定义弹框的样式；
 				mainPrompt : 'width:100%;height:'+revcss.PH+'px;background:white;'+
 						  'border-bottom:1px solid #f5f1f1;text-align:center;'+
@@ -74,19 +77,21 @@
             };
 		}
         function _clickEvent(ele1,ele2,callback) {
-            var layer = document.querySelector('#layerbox');
+            var layerbox = document.querySelector('#layerbox');
+            var layer = document.querySelector('#layer');
             var alert = document.querySelector('#window-alert');
+            layer.style.display='block';
             ele1.onclick = function() {
                 alert.style.transform = 'scale(0)';
                 setTimeout(function(){
-                    document.body.removeChild(layer);
+                    document.body.removeChild(layerbox);
                 }, 200);
                 callback('true');
             };
             ele2.onclick = function() {
                 alert.style.transform = 'scale(0)';
                 setTimeout(function(){
-                    document.body.removeChild(layer);
+                    document.body.removeChild(layerbox);
                 }, 200);
                 callback('false');
             }
@@ -137,8 +142,6 @@
             if(!document.getElementById('layerbox')){
                 document.body.appendChild(layerbox);
             };
-            //默认隐藏弹出框
-            layerbox.style = 'display:block'; 
 			//调用样式文件
 			_setcssStyle({
 				layer : layer,
